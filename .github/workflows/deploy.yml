@@ -21,8 +21,7 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key
           chmod 600 private_key
-          scp -i private_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r . leul@leul-HP-Pavilion-Laptop-15-cs3xxx:/Documents 
-
+          scp -i private_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r . leul@leul-HP-Pavilion-Laptop-15-cs3xxx:/home/leul/Documents
           ssh -i private_key leul@leul-HP-Pavilion-Laptop-15-cs3xxx "bash /Documents/build_and_run_docker.sh"
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
