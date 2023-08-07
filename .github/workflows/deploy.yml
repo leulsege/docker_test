@@ -1,4 +1,4 @@
-name: build_container
+name: Trigger Local Container Build
 
 on:
     push:
@@ -14,18 +14,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Trigger local build
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key
+          chmod 600 private_key
+          scp -i private_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r . leul@leul-HP-Pavilion-Laptop-15-cs3xxx:~/Documents 
 
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/leul_docker
+          ssh -i private_key leul@leul-HP-Pavilion-Laptop-15-cs3xxx "bash /Documents/build_and_run_docker.sh"
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Docker Push
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/leul_docker
-      
 
